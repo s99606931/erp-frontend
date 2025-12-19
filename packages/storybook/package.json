@@ -1,0 +1,45 @@
+{
+    "name": "@erp/storybook",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "storybook dev -p 6006",
+        "build": "storybook build",
+        "build-storybook": "storybook build -o storybook-static",
+        "lint": "eslint .",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@erp/ui": "workspace:*",
+        "lucide-react": "^0.309.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.23.0",
+        "@babel/preset-env": "^7.23.0",
+        "@babel/preset-react": "^7.23.0",
+        "@babel/preset-typescript": "^7.23.0",
+        "babel-loader": "^9.1.0",
+        "@chromatic-com/storybook": "^1.6.1",
+        "@storybook/addon-a11y": "^8.6.0",
+        "@storybook/addon-essentials": "^8.6.0",
+        "@storybook/addon-interactions": "^8.6.0",
+        "@storybook/addon-links": "^8.6.0",
+        "@storybook/addon-onboarding": "^8.6.0",
+        "@storybook/blocks": "^8.6.0",
+        "@storybook/react": "^8.6.0",
+        "@storybook/react-webpack5": "^8.6.0",
+        "@storybook/test": "^8.6.0",
+        "@types/react": "^18.2.48",
+        "@types/react-dom": "^18.2.18",
+        "autoprefixer": "^10.4.17",
+        "css-loader": "^6.10.0",
+        "postcss": "^8.4.33",
+        "postcss-loader": "^8.1.0",
+        "storybook": "^8.6.0",
+        "style-loader": "^3.3.4",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.3.3"
+    }
+}

@@ -1,0 +1,64 @@
+/**
+ * ============================================================================
+ * 파일명: globals.css
+ * 패키지: @erp/storybook
+ * 경로: packages/storybook/src/globals.css
+ * 작성일: 2025-12-19
+ * ============================================================================
+ *
+ * [📄 파일 설명]
+ * Storybook 전역 스타일 파일입니다.
+ * @erp/ui의 스타일을 가져오고 Storybook 전용 스타일을 추가합니다.
+ * ============================================================================
+ */
+
+/* @erp/ui 전역 스타일 가져오기 */
+@import '@erp/ui/globals.css';
+
+/* Storybook 전용 스타일 */
+.sb-show-main {
+  padding: 2rem;
+}
+
+/* 스토리 컨테이너 스타일 */
+.story-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 토큰 데모용 스타일 */
+.token-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.color-swatch {
+  width: 100%;
+  height: 80px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.typography-sample {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.spacing-demo {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.spacing-block {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border-radius: 4px;
+}
