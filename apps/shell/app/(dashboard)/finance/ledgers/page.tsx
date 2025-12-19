@@ -38,12 +38,12 @@ export default function LedgerPage() {
                         회계 전표 조회 및 작성, 승인 요청을 관리합니다.
                     </p>
                 </div>
-                <Button asChild>
-                    <Link href="/finance/ledgers/new">
+                <Link href="/finance/ledgers/new">
+                    <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         전표 작성
-                    </Link>
-                </Button>
+                    </Button>
+                </Link>
             </div>
 
             <LedgerListTable ledgers={ledgers} isLoading={isLoading} />

@@ -61,7 +61,7 @@ export function LoginForm() {
                 // 로그인 성공 시 대시보드로 이동
                 window.location.href = '/';
             }
-        } catch (err) {
+        } catch {
             setGlobalError('로그인 중 오류가 발생했습니다.');
         } finally {
             setIsLoading(false);

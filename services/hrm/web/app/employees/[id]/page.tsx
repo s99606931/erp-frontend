@@ -30,7 +30,7 @@ const EMPLOYEE = {
 };
 
 export default function EmployeeDetailPage({
-    params,
+    params: _params,
 }: {
     params: { id: string };
 }) {

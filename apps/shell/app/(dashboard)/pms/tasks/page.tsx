@@ -54,12 +54,12 @@ export default function TaskPage() {
                         프로젝트 내 개별 업무를 관리합니다.
                     </p>
                 </div>
-                <Button asChild>
-                    <Link href="/pms/tasks/new">
+                <Link href="/pms/tasks/new">
+                    <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         태스크 추가
-                    </Link>
-                </Button>
+                    </Button>
+                </Link>
             </div>
 
             <TaskListTable tasks={tasks} isLoading={isLoading} onDelete={handleDelete} />

@@ -66,12 +66,12 @@ export default function EmployeeListPage() {
                         전체 임직원 명부 조회 및 인사 정보를 관리합니다.
                     </p>
                 </div>
-                <Button asChild>
-                    <Link href="/hrm/employees/new">
+                <Link href="/hrm/employees/new">
+                    <Button>
                         <Plus className="mr-2 h-4 w-4" />
                         사원 등록
-                    </Link>
-                </Button>
+                    </Button>
+                </Link>
             </div>
 
             <EmployeeListTable

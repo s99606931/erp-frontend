@@ -61,12 +61,12 @@ export default function ProjectPage() {
                             <LayoutGrid className="h-4 w-4" />
                         </Button>
                     </div>
-                    <Button asChild>
-                        <Link href="/pms/projects/new">
+                    <Link href="/pms/projects/new">
+                        <Button>
                             <Plus className="mr-2 h-4 w-4" />
                             프로젝트 생성
-                        </Link>
-                    </Button>
+                        </Button>
+                    </Link>
                 </div>
             </div>
 

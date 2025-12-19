@@ -75,7 +75,7 @@ export default function TwoFactorPage() {
         const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
         const newCode = [...code];
         for (let i = 0; i < pastedData.length; i++) {
-            newCode[i] = pastedData[i];
+            newCode[i] = pastedData[i] ?? '';
         }
         setCode(newCode);
 
@@ -149,7 +149,7 @@ export default function TwoFactorPage() {
                         {code.map((digit, index) => (
                             <input
                                 key={index}
-                                ref={(el) => (inputRefs.current[index] = el)}
+                                ref={(el) => { inputRefs.current[index] = el; }}
                                 type="text"
                                 inputMode="numeric"
                                 maxLength={1}

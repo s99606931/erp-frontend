@@ -62,11 +62,11 @@ export function LedgerListTable({ ledgers, isLoading }: LedgerListTableProps) {
                                 <StatusBadge status={ledger.status} />
                             </TableCell>
                             <TableCell className="text-right">
-                                <Button variant="ghost" size="icon" asChild>
-                                    <Link href={`/finance/ledgers/${ledger.id}`}>
+                                <Link href={`/finance/ledgers/${ledger.id}`}>
+                                    <Button variant="ghost" size="icon">
                                         <FileText className="h-4 w-4" />
-                                    </Link>
-                                </Button>
+                                    </Button>
+                                </Link>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -97,7 +97,6 @@ function StatusBadge({ status }: { status: LedgerStatus }) {
             return <Badge variant="secondary" className="bg-orange-100 text-orange-700 hover:bg-orange-200">승인대기</Badge>;
         case LedgerStatus.DRAFT:
             return <Badge variant="outline" className="text-gray-500">작성중</Badge>;
-            return <Badge variant="error">반려</Badge>;
         default:
             return <Badge>{status}</Badge>;
     }
