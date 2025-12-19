@@ -45,7 +45,8 @@ export function GlobalSearch() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [recentSearches, setRecentSearches] = useState<string[]>(['사원', '급여']);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [recentSearches] = useState<string[]>(['사원', '급여']);
     const inputRef = useRef<HTMLInputElement>(null);
 
     // '/' 키로 검색창 열기

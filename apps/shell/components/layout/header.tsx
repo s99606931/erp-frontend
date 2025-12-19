@@ -3,75 +3,126 @@
  * 파일명: header.tsx
  * 앱: shell
  * 경로: apps/shell/components/layout/header.tsx
- * 작성일: 2025-12-19
+ * 작성일: 2025-12-20
  * ============================================================================
  *
  * [📄 파일 설명]
- * 글로벌 헤더 컴포넌트입니다.
- * 로고, 검색바, 알림, 프로필을 표시합니다.
+ * 대시보드 상단 글로벌 헤더입니다.
+ * 로고, 통합 검색, 알림, 프로필 영역을 포함합니다.
+ *
+ * [⌨️ 단축키]
+ * - `/`: 통합 검색 입력창 포커스
  * ============================================================================
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import { Bell, Search, Menu, User as UserIcon, LogOut } from 'lucide-react';
 import { Button, Input } from '@erp/ui/components';
-import { Search, Bell, Star, User, ChevronDown } from 'lucide-react';
+import { useLayoutStore } from '@/lib/store/layout';
+import { useTheme } from 'next-themes';
 
 export function Header() {
-    const [searchQuery, setSearchQuery] = useState('');
+    const { data: session } = useSession();
+    const { toggleSidebar } = useLayoutStore();
+    const { theme, setTheme } = useTheme();
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // 단축키 `/` 처리
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     return (
-        <header className="h-16 border-b bg-background flex items-center px-4 gap-4">
-            {/* 로고 */}
-            <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
-                    <span className="text-sm font-bold text-primary-foreground">ERP</span>
+        <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background px-4 shadow-sm md:px-6">
+            {/* 좌측: 사이드바 토글 & 로고 */}
+            <div className="flex items-center gap-4">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleSidebar}
+                    aria-label="사이드바 토글 (Ctrl+B)"
+                    className="shrink-0"
+                >
+                    <Menu className="h-5 w-5" />
+                </Button>
+
+                <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+                        E
+                    </div>
+                    <span className="hidden text-lg font-bold md:inline-block">
+                        공공 ERP
+                    </span>
+                    {/* 테넌트 이름 표시 (추후 동적 연동) */}
+                    <span className="ml-2 hidden text-xs text-muted-foreground md:inline-block border px-2 py-0.5 rounded-full">
+                        서울특별시
+                    </span>
                 </div>
-                <span className="font-semibold text-lg hidden md:block">공공기관 ERP</span>
             </div>
 
-            {/* 통합 검색 */}
-            <div className="flex-1 max-w-xl mx-auto">
+            {/* 중앙: 통합 검색 */}
+            <div className="flex-1 max-w-md mx-4">
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
+                        ref={searchInputRef}
                         type="search"
-                        placeholder="메뉴, 문서, 데이터 검색... (/ 키로 빠른 검색)"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 w-full"
+                        placeholder="통합 검색... (/)"
+                        className="w-full bg-background pl-8 md:w-[300px] lg:w-[400px]"
                         aria-label="통합 검색"
                     />
-                    <kbd className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium text-muted-foreground">
+                    <kbd className="pointer-events-none absolute right-2.5 top-2.5 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 sm:flex">
                         /
                     </kbd>
                 </div>
             </div>
 
-            {/* 우측 메뉴 */}
+            {/* 우측: 유틸리티 & 프로필 */}
             <div className="flex items-center gap-2">
-                {/* 즐겨찾기 */}
-                <Button variant="ghost" size="icon" aria-label="즐겨찾기">
-                    <Star className="h-5 w-5" />
+                {/* 테마 토글 (임시) */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    aria-label="테마 변경"
+                >
+                    <span className="sr-only">테마 변경</span>
+                    <div className="h-4 w-4 rounded-full border bg-foreground" />
                 </Button>
 
-                {/* 알림 */}
-                <Button variant="ghost" size="icon" aria-label="알림" className="relative">
+                <Button variant="ghost" size="icon" aria-label="알림 확인">
                     <Bell className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-error text-error-foreground text-xs rounded-full flex items-center justify-center">
-                        3
-                    </span>
+                    <span className="sr-only">알림</span>
                 </Button>
 
-                {/* 사용자 프로필 */}
-                <Button variant="ghost" className="flex items-center gap-2" aria-label="사용자 메뉴">
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4" />
+                <div className="flex items-center gap-2 border-l pl-2 ml-2">
+                    <div className="hidden flex-col items-end text-sm md:flex">
+                        <span className="font-medium">{session?.user?.name || '사용자'}</span>
+                        <span className="text-xs text-muted-foreground">행정안전국</span>
                     </div>
-                    <span className="hidden md:block text-sm">홍길동</span>
-                    <ChevronDown className="h-4 w-4" />
-                </Button>
+                    <Button variant="ghost" size="icon" className="rounded-full bg-muted/50" aria-label="사용자 메뉴">
+                        <UserIcon className="h-5 w-5" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => signOut({ callbackUrl: '/login' })}
+                        aria-label="로그아웃"
+                    >
+                        <LogOut className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
         </header>
     );

@@ -15,6 +15,7 @@
 import { Header } from '@/components/layout/header';
 import { Sidebar } from '@/components/layout/sidebar';
 import { StatusBar } from '@/components/layout/status-bar';
+import { WorkspaceTabs } from '@/components/layout/workspace-tabs';
 
 export default function DashboardLayout({
     children,
@@ -22,21 +23,30 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex h-screen flex-col">
-            {/* 헤더 (64px 고정) */}
+        <div className="flex h-screen flex-col overflow-hidden bg-background">
+            {/* 1. 글로벌 헤더 (64px) */}
             <Header />
 
+            {/* 2. 메인 영역 (Flex) */}
             <div className="flex flex-1 overflow-hidden">
-                {/* 사이드바 (240px, 접힘 64px) */}
+                {/* 좌측 사이드바 */}
                 <Sidebar />
 
-                {/* 메인 콘텐츠 */}
-                <main className="flex-1 overflow-auto bg-muted/30 p-6">
-                    {children}
+                {/* 콘텐츠 영역 */}
+                <main className="flex flex-1 flex-col overflow-hidden bg-muted/10 relative">
+                    {/* 상단 탭 네비게이션 */}
+                    <div className="flex-none">
+                        <WorkspaceTabs />
+                    </div>
+
+                    {/* 실제 페이지 콘텐츠 */}
+                    <div className="flex-1 overflow-auto p-4 md:p-6" id="main-content">
+                        {children}
+                    </div>
                 </main>
             </div>
 
-            {/* 상태바 (32px 고정) */}
+            {/* 3. 상태바 (32px) */}
             <StatusBar />
         </div>
     );

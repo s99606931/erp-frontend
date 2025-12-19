@@ -3,171 +3,142 @@
  * 파일명: sidebar.tsx
  * 앱: shell
  * 경로: apps/shell/components/layout/sidebar.tsx
- * 작성일: 2025-12-19
+ * 작성일: 2025-12-20
  * ============================================================================
  *
  * [📄 파일 설명]
- * 사이드 네비게이션 컴포넌트입니다.
- * 3 Depth 메뉴 트리를 표시합니다.
+ * 좌측 사이드바 네비게이션입니다.
+ * 메뉴 구조를 재귀적으로 렌더링하며, 접힘/펼침 상태를 지원합니다.
  *
- * [♿ 접근성]
- * - Ctrl+B로 토글
- * - 화살표 키로 메뉴 탐색
+ * [⌨️ 단축키]
+ * - Ctrl+B: 사이드바 토글
  * ============================================================================
  */
 
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@erp/ui/components';
-import {
-    Users,
-    Wallet,
-    Calculator,
-    FileCheck,
-    Settings,
-    ChevronRight,
-    ChevronDown,
-    PanelLeftClose,
-    PanelLeft,
-} from 'lucide-react';
+import { useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@erp/ui';
+import { Button } from '@erp/ui/components';
+import { useLayoutStore } from '@/lib/store/layout';
+import { MENU_STRUCTURE } from '@erp/shared';
+import { LayoutDashboard, ChevronDown } from 'lucide-react';
+import * as Icons from 'lucide-react'; // Dynamic Icon Rendering
 
-interface MenuItem {
-    id: string;
-    label: string;
-    icon?: React.ReactNode;
-    path?: string;
-    children?: MenuItem[];
-}
-
-const MENU_ITEMS: MenuItem[] = [
-    {
-        id: 'hrm',
-        label: '인사관리',
-        icon: <Users className="h-4 w-4" />,
-        children: [
-            { id: 'hrm-employees', label: '사원관리', path: '/hrm/employees' },
-            { id: 'hrm-cards', label: '인사카드', path: '/hrm/cards' },
-            { id: 'hrm-org', label: '조직도', path: '/hrm/organization' },
-        ],
-    },
-    {
-        id: 'payroll',
-        label: '급여관리',
-        icon: <Wallet className="h-4 w-4" />,
-        children: [
-            { id: 'payroll-calc', label: '급여계산', path: '/payroll/calculate' },
-            { id: 'payroll-slip', label: '급여명세서', path: '/payroll/slips' },
-        ],
-    },
-    {
-        id: 'accounting',
-        label: '회계관리',
-        icon: <Calculator className="h-4 w-4" />,
-        children: [
-            { id: 'accounting-voucher', label: '전표관리', path: '/accounting/vouchers' },
-        ],
-    },
-    {
-        id: 'approval',
-        label: '전자결재',
-        icon: <FileCheck className="h-4 w-4" />,
-        children: [
-            { id: 'approval-draft', label: '기안작성', path: '/approval/draft' },
-            { id: 'approval-pending', label: '결재대기', path: '/approval/pending' },
-        ],
-    },
-    {
-        id: 'admin',
-        label: '시스템관리',
-        icon: <Settings className="h-4 w-4" />,
-        children: [
-            { id: 'admin-users', label: '사용자관리', path: '/admin/users' },
-            { id: 'admin-tenant', label: '테넌트설정', path: '/admin/tenant' },
-        ],
-    },
-];
+// Lucide 아이콘 동적 렌더링을 위한 헬퍼
+const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Icon = (Icons as any)[name];
+    if (!Icon) return <LayoutDashboard className={className} />;
+    return <Icon className={className} />;
+};
 
 export function Sidebar() {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [expandedItems, setExpandedItems] = useState<string[]>(['hrm']);
+    const pathname = usePathname();
+    const { sidebarOpen, toggleSidebar } = useLayoutStore();
 
-    const toggleItem = (id: string) => {
-        setExpandedItems((prev) =>
-            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-        );
-    };
+    // 단축키 Ctrl+B 처리
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                toggleSidebar();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [toggleSidebar]);
 
     return (
         <aside
             className={cn(
-                'border-r bg-background transition-all duration-200 flex flex-col',
-                isCollapsed ? 'w-16' : 'w-60'
+                'relative flex flex-col border-r bg-muted/10 transition-all duration-300 ease-in-out',
+                sidebarOpen ? 'w-60' : 'w-16'
             )}
         >
-            {/* 토글 버튼 */}
-            <div className="p-2 border-b">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    aria-label={isCollapsed ? '메뉴 펼치기' : '메뉴 접기'}
-                    className="w-full justify-center"
-                >
-                    {isCollapsed ? (
-                        <PanelLeft className="h-4 w-4" />
-                    ) : (
-                        <PanelLeftClose className="h-4 w-4" />
-                    )}
-                </Button>
-            </div>
+            {/* 상단 즐겨찾기/최근 영역 (펼쳐진 상태에서만 노출) */}
+            {sidebarOpen && (
+                <div className="p-4 border-b">
+                    <h3 className="text-xs font-semibold text-muted-foreground mb-2">
+                        즐겨찾기
+                    </h3>
+                    <div className="space-y-1">
+                        <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
+                            <span className="truncate">⭐ 이번 달 지출 결의</span>
+                        </Button>
+                        <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
+                            <span className="truncate">⭐ 부서별 예산 현황</span>
+                        </Button>
+                    </div>
+                </div>
+            )}
 
-            {/* 메뉴 목록 */}
-            <nav className="flex-1 overflow-y-auto p-2">
-                <ul className="space-y-1">
-                    {MENU_ITEMS.map((item) => (
-                        <li key={item.id}>
-                            <button
-                                onClick={() => toggleItem(item.id)}
-                                className={cn(
-                                    'w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm',
-                                    'hover:bg-muted transition-colors',
-                                    expandedItems.includes(item.id) && 'bg-muted'
-                                )}
-                            >
-                                {item.icon}
-                                {!isCollapsed && (
-                                    <>
-                                        <span className="flex-1 text-left">{item.label}</span>
-                                        {expandedItems.includes(item.id) ? (
-                                            <ChevronDown className="h-4 w-4" />
-                                        ) : (
-                                            <ChevronRight className="h-4 w-4" />
+            {/* 네비게이션 메뉴 */}
+            <nav className="flex-1 overflow-y-auto py-4">
+                <ul className="space-y-1 px-2">
+                    {MENU_STRUCTURE.map((menu) => {
+                        const menuPath = menu.path || '#';
+                        const isActive = pathname.startsWith(menuPath);
+
+                        return (
+                            <li key={menu.id}>
+                                <div className="space-y-1">
+                                    <Link
+                                        href={menuPath}
+                                        className={cn(
+                                            'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                                            isActive ? 'bg-accent/50 text-accent-foreground' : 'text-muted-foreground',
+                                            !sidebarOpen && 'justify-center px-0'
                                         )}
-                                    </>
-                                )}
-                            </button>
+                                        title={!sidebarOpen ? (menu.label || '') : undefined}
+                                    >
+                                        <DynamicIcon name={menu.icon || 'LayoutDashboard'} className="h-4 w-4 shrink-0" />
 
-                            {/* 하위 메뉴 */}
-                            {!isCollapsed && expandedItems.includes(item.id) && item.children && (
-                                <ul className="ml-6 mt-1 space-y-1">
-                                    {item.children.map((child) => (
-                                        <li key={child.id}>
-                                            <a
-                                                href={child.path}
-                                                className="block px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md"
-                                            >
-                                                {child.label}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </li>
-                    ))}
+                                        {sidebarOpen && (
+                                            <>
+                                                <span className="ml-3 truncate flex-1">{menu.label}</span>
+                                                {menu.children && (
+                                                    <ChevronDown className="h-3 w-3 text-muted-foreground/50" />
+                                                )}
+                                            </>
+                                        )}
+                                    </Link>
+
+                                    {/* Submenu */}
+                                    {sidebarOpen && menu.children && isActive && (
+                                        <ul className="ml-4 space-y-1 border-l pl-2">
+                                            {menu.children.map((child) => (
+                                                <li key={child.id}>
+                                                    <Link
+                                                        href={child.path || '#'}
+                                                        className={cn(
+                                                            'flex h-8 w-full items-center rounded-md px-2 text-sm text-muted-foreground transition-colors hover:text-foreground',
+                                                            pathname === child.path && 'bg-muted text-foreground font-medium'
+                                                        )}
+                                                    >
+                                                        {child.label}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </li>
+                        );
+                    })}
                 </ul>
             </nav>
+
+            {/* 하단 버전 정보 */}
+            {sidebarOpen && (
+                <div className="p-4 text-xs text-muted-foreground border-t">
+                    <p>ERP v2.0</p>
+                    <p className="mt-1">© 2025 GovTech</p>
+                </div>
+            )}
         </aside>
     );
 }

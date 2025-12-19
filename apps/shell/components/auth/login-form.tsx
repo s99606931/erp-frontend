@@ -20,6 +20,7 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardContent, CardFooter } from '@erp/ui/components';
 import { Loader2, Mail, Lock, AlertCircle } from 'lucide-react';
 
@@ -35,13 +36,20 @@ export function LoginForm() {
         setIsLoading(true);
 
         try {
-            // TODO: 실제 로그인 API 호출
-            await new Promise((resolve) => setTimeout(resolve, 1500));
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+            });
 
-            // 성공 시 대시보드로 이동
-            window.location.href = '/';
+            if (result?.error) {
+                setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+            } else {
+                // 로그인 성공 시 대시보드로 이동 (Middleware가 처리하지만 명시적 리로드)
+                window.location.href = '/';
+            }
         } catch (err) {
-            setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+            setError('로그인 중 오류가 발생했습니다.');
         } finally {
             setIsLoading(false);
         }
