@@ -15,6 +15,7 @@
 import type { Metadata } from 'next';
 import { Providers } from '@/components/providers';
 import { TokenSyncer } from '@/components/auth/token-syncer';
+import { Toaster } from '@erp/ui';
 import '@erp/ui/globals.css';
 import './globals.css';
 
@@ -34,6 +35,7 @@ export default function RootLayout({
                 <Providers>
                     <TokenSyncer />
                     {children}
+                    <Toaster />
                 </Providers>
             </body>
         </html>

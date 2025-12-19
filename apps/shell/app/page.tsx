@@ -9,12 +9,13 @@
  * [📄 파일 설명]
  * 루트 페이지입니다.
  * 대시보드로 리다이렉트합니다.
+ * (인증이 필요한 경우 middleware에서 로그인으로 리다이렉트됨)
  * ============================================================================
  */
 
 import { redirect } from 'next/navigation';
 
 export default function Home() {
-    // 로그인 상태 확인 후 리다이렉트
-    redirect('/login');
+    // 대시보드로 리다이렉트 (미인증 시 middleware가 /login으로 처리)
+    redirect('/dashboard');
 }

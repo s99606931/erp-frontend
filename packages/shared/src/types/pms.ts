@@ -35,3 +35,34 @@ export interface Project {
     createdAt: Date;
     updatedAt: Date;
 }
+
+// ============================================================================
+// Task (업무/태스크) 관련 타입
+// ============================================================================
+
+export enum TaskStatus {
+    TODO = 'TODO',           // 할 일
+    IN_PROGRESS = 'IN_PROGRESS', // 진행 중
+    IN_REVIEW = 'IN_REVIEW', // 검토 중
+    DONE = 'DONE',           // 완료
+    BLOCKED = 'BLOCKED',     // 블로킹됨
+}
+
+export interface Task {
+    id: string;
+    tenantId: string;
+    projectId: string;       // 소속 프로젝트 ID
+    projectName?: string;    // 프로젝트명 (조인용)
+    title: string;
+    description?: string;
+    status: TaskStatus;
+    priority: ProjectPriority;
+    assigneeId?: string;     // 담당자 (Employee ID)
+    assigneeName?: string;   // 담당자명
+    dueDate?: Date;
+    estimatedHours?: number; // 예상 소요시간
+    actualHours?: number;    // 실제 소요시간
+    tags?: string[];
+    createdAt: Date;
+    updatedAt: Date;
+}

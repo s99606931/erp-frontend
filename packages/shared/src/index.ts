@@ -14,6 +14,7 @@ export * from './types/tenant';
 export * from './types/hrm';
 export * from './types/finance';
 export * from './types/pms';
+export * from './types/common-code';
 
 // Constants
 export * from './constants/menu-structure';

@@ -36,3 +36,18 @@ export async function PUT(
 
     return NextResponse.json(MOCK_LEDGERS[index]);
 }
+
+export async function DELETE(
+    _request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+    const index = MOCK_LEDGERS.findIndex((l) => l.id === id);
+
+    if (index === -1) {
+        return new NextResponse('Ledger not found', { status: 404 });
+    }
+
+    MOCK_LEDGERS.splice(index, 1);
+    return new NextResponse(null, { status: 204 });
+}

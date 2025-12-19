@@ -21,6 +21,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
 
+                    // ==========================================
+                    // [개발용] Mock Login - Backend 없이 테스트
+                    // 실제 운영 시 아래 블록을 제거하세요
+                    // ==========================================
+                    if (process.env.NODE_ENV === 'development') {
+                        const MOCK_USERS = [
+                            { id: 'user-1', email: 'admin@test.com', password: 'password123', name: '관리자', role: 'SUPER_ADMIN' },
+                            { id: 'user-2', email: 'user@test.com', password: 'password123', name: '일반사용자', role: 'USER' },
+                        ];
+
+                        const mockUser = MOCK_USERS.find(u => u.email === email && u.password === password);
+                        if (mockUser) {
+                            console.log('[DEV] Mock login:', mockUser.email);
+                            return {
+                                id: mockUser.id,
+                                email: mockUser.email,
+                                name: mockUser.name,
+                                role: mockUser.role,
+                                accessToken: 'mock-token-' + Date.now(),
+                            };
+                        }
+                    }
+                    // ==========================================
+
                     try {
                         const res = await fetch(`${API_URL}/auth/login`, {
                             method: 'POST',
