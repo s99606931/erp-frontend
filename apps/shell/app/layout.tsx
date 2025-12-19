@@ -14,6 +14,7 @@
 
 import type { Metadata } from 'next';
 import { Providers } from '@/components/providers';
+import { TokenSyncer } from '@/components/auth/token-syncer';
 import '@erp/ui/globals.css';
 import './globals.css';
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <html lang="ko" suppressHydrationWarning>
             <body className="min-h-screen bg-background font-sans antialiased">
                 <Providers>
+                    <TokenSyncer />
                     {children}
                 </Providers>
             </body>

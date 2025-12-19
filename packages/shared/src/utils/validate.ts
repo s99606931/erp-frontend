@@ -50,6 +50,21 @@ export const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 
 /**
+ * 사용자 등록/수정 스키마
+ */
+export const userSchema = z.object({
+    email: emailRules,
+    name: z.string().min(2, '이름은 최소 2자 이상이어야 합니다.'),
+    password: z.string().optional(), // 수정 시 선택
+    role: z.enum(['SUPER_ADMIN', 'TENANT_ADMIN', 'MANAGER', 'USER']),
+    status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING']),
+    phoneNumber: z.string().optional(),
+    departmentId: z.string().optional(),
+});
+
+export type UserFormData = z.infer<typeof userSchema>;
+
+/**
  * 사업자등록번호 유효성 검사 (간이 알고리즘)
  * @param bn - 사업자번호 문자열 (하이픈 제거)
  */

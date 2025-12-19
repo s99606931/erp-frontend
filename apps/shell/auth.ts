@@ -2,18 +2,8 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 
-// Edge Runtime 호환성을 위해 @erp/shared 의존성 제거 (axios 포함됨)
-// Mock User
-const MOCK_USERS = [
-    {
-        id: 'u-1',
-        email: 'admin@gov.go.kr',
-        password: '1234',
-        name: '김공무',
-        role: 'SUPER_ADMIN',
-        status: 'ACTIVE',
-    },
-];
+// Backend API URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [
@@ -30,17 +20,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;
-                    const user = MOCK_USERS.find((u) => u.email === email);
 
-                    if (!user) return null;
+                    try {
+                        const res = await fetch(`${API_URL}/auth/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password }),
+                        });
 
-                    if (user.password !== password) return null;
+                        if (!res.ok) {
+                            console.error('Login failed:', await res.text());
+                            return null;
+                        }
 
-                    return {
-                        id: user.id,
-                        email: user.email,
-                        name: user.name,
-                    };
+                        const user = await res.json();
+                        // Backend expected response: { id, email, name, role, accessToken, ... }
+                        return user;
+                    } catch (error) {
+                        console.error('Auth error:', error);
+                        return null;
+                    }
                 }
 
                 return null;
@@ -53,12 +52,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     callbacks: {
         async session({ session, token }) {
-            if (token.sub && session.user) {
-                // session.user.id = token.sub; 
+            if (token) {
+                session.accessToken = token.accessToken as string;
+                if (session.user) {
+                    session.user.id = token.id as string;
+                    session.user.role = token.role as string;
+                }
             }
             return session;
         },
-        async jwt({ token }) {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.role = user.role;
+                token.accessToken = user.accessToken;
+            }
             return token;
         },
     },

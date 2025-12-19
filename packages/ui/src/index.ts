@@ -32,5 +32,12 @@ export {
 // 토큰 (개별 import 시 사용)
 export * from './tokens';
 
+// 컴포넌트
+export * from './components/ui/input';
+export * from './components/ui/label';
+export * from './components/ui/table';
+export * from './components/ui/dialog';
+export * from './components/ui/select';
+
 // 전역 스타일 (앱에서 직접 import)
 // import '@erp/ui/globals.css';

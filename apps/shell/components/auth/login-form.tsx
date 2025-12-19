@@ -17,39 +17,52 @@
  * ============================================================================
  */
 
+
 'use client';
 
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardContent, CardFooter } from '@erp/ui/components';
 import { Loader2, Mail, Lock, AlertCircle } from 'lucide-react';
+import { loginSchema, type LoginFormData } from '@erp/shared';
 
 export function LoginForm() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [globalError, setGlobalError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    });
+
+    const onSubmit = async (data: LoginFormData) => {
+        setGlobalError('');
         setIsLoading(true);
 
         try {
             const result = await signIn('credentials', {
-                email,
-                password,
+                email: data.email,
+                password: data.password,
                 redirect: false,
             });
 
             if (result?.error) {
-                setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+                setGlobalError('이메일 또는 비밀번호가 올바르지 않습니다.');
             } else {
-                // 로그인 성공 시 대시보드로 이동 (Middleware가 처리하지만 명시적 리로드)
+                // 로그인 성공 시 대시보드로 이동
                 window.location.href = '/';
             }
         } catch (err) {
-            setError('로그인 중 오류가 발생했습니다.');
+            setGlobalError('로그인 중 오류가 발생했습니다.');
         } finally {
             setIsLoading(false);
         }
@@ -60,62 +73,61 @@ export function LoginForm() {
             <CardHeader>
                 <CardTitle className="text-center">로그인</CardTitle>
             </CardHeader>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <CardContent className="space-y-4">
-                    {/* 오류 메시지 */}
-                    {error && (
+                    {/* 전역 오류 메시지 */}
+                    {globalError && (
                         <div
                             role="alert"
                             aria-live="assertive"
-                            className="flex items-center gap-2 p-3 rounded-md bg-error/10 text-error text-sm"
+                            className="flex items-center gap-2 p-3 rounded-md bg-destructive/10 text-destructive text-sm"
                         >
                             <AlertCircle className="h-4 w-4" />
-                            {error}
+                            {globalError}
                         </div>
                     )}
 
                     {/* 이메일 입력 */}
                     <div className="space-y-2">
-                        <Label htmlFor="email" required>
-                            이메일
-                        </Label>
+                        <Label htmlFor="email">이메일</Label>
                         <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 id="email"
                                 type="email"
                                 placeholder="example@gov.go.kr"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
                                 className="pl-10"
-                                required
                                 autoComplete="email"
-                                aria-describedby="email-help"
+                                aria-invalid={!!errors.email}
+                                {...register('email')}
                             />
                         </div>
-                        <p id="email-help" className="text-xs text-muted-foreground">
+                        {errors.email && (
+                            <p className="text-xs text-destructive">{errors.email.message}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
                             사전 승인된 이메일만 로그인 가능합니다
                         </p>
                     </div>
 
                     {/* 비밀번호 입력 */}
                     <div className="space-y-2">
-                        <Label htmlFor="password" required>
-                            비밀번호
-                        </Label>
+                        <Label htmlFor="password">비밀번호</Label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 id="password"
                                 type="password"
-                                placeholder="비밀번호를 입력하세요"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="비밀번호"
                                 className="pl-10"
-                                required
                                 autoComplete="current-password"
+                                aria-invalid={!!errors.password}
+                                {...register('password')}
                             />
                         </div>
+                        {errors.password && (
+                            <p className="text-xs text-destructive">{errors.password.message}</p>
+                        )}
                     </div>
 
                     {/* 비밀번호 찾기 */}
@@ -135,11 +147,11 @@ export function LoginForm() {
                         type="submit"
                         className="w-full"
                         size="lg"
-                        disabled={isLoading || !email || !password}
+                        disabled={isLoading}
                     >
                         {isLoading ? (
                             <>
-                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
                                 로그인 중...
                             </>
                         ) : (
@@ -153,7 +165,7 @@ export function LoginForm() {
                             <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-muted-foreground">
+                            <span className="bg-background px-2 text-muted-foreground">
                                 또는
                             </span>
                         </div>
