@@ -1,0 +1,27 @@
+{
+    "name": "erp-saas-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "packageManager": "pnpm@8.15.0",
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint",
+        "type-check": "turbo run type-check",
+        "clean": "turbo run clean && rm -rf node_modules",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+        "shell:dev": "pnpm --filter shell dev",
+        "storybook": "pnpm --filter storybook dev"
+    },
+    "devDependencies": {
+        "turbo": "^1.11.3",
+        "typescript": "^5.3.3",
+        "prettier": "^3.2.4",
+        "@types/node": "^20.11.0"
+    },
+    "engines": {
+        "node": ">=20.0.0",
+        "pnpm": ">=8.0.0"
+    }
+}

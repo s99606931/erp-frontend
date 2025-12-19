@@ -1,0 +1,84 @@
+# ============================================================================
+# docker-compose.yml
+# 프로젝트: 공공기관 ERP SaaS
+# 경로: d:/app/docker-compose.yml
+# 작성일: 2025-12-19
+# ============================================================================
+#
+# [📄 파일 설명]
+# 모든 마이크로서비스를 Docker Compose로 한 번에 실행합니다.
+#
+# [🚀 실행 명령]
+# docker-compose up -d        # 전체 서비스 시작
+# docker-compose down         # 전체 서비스 중지
+# docker-compose logs -f      # 로그 확인
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Shell App (메인 컨테이너)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  shell:
+    build:
+      context: ./apps/shell
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-gateway:8080
+    depends_on:
+      - auth-web
+      - hrm-web
+      - payroll-web
+    networks:
+      - erp-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # auth-web (인증)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  auth-web:
+    build:
+      context: ./services/auth/web
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-gateway:8080
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=your-secret-key
+    networks:
+      - erp-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # hrm-web (인사관리)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  hrm-web:
+    build:
+      context: ./services/hrm/web
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3010"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-gateway:8080
+    networks:
+      - erp-network
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # payroll-web (급여관리)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  payroll-web:
+    build:
+      context: ./services/payroll/web
+      dockerfile: Dockerfile
+    ports:
+      - "3011:3011"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://api-gateway:8080
+    networks:
+      - erp-network
+
+networks:
+  erp-network:
+    driver: bridge

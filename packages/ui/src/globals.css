@@ -1,0 +1,134 @@
+/**
+ * ============================================================================
+ * 파일명: globals.css
+ * 패키지: @erp/ui
+ * 경로: packages/ui/src/globals.css
+ * 작성일: 2025-12-19
+ * ============================================================================
+ *
+ * [파일 설명]
+ * 전역 CSS 변수 및 Tailwind 기본 스타일
+ * 모든 앱에서 이 파일을 import하여 일관된 스타일을 적용합니다.
+ *
+ * [♿ 접근성]
+ * - 포커스 스타일 정의
+ * - prefers-reduced-motion 대응
+ * ============================================================================
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    /* 테넌트 테마 색상 (CSS 변수)                                      */
+    /* 이 값들은 로그인 시 테넌트에 따라 동적으로 변경됩니다           */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    
+    --color-primary: 59 130 246;
+    --color-primary-foreground: 255 255 255;
+    --color-secondary: 16 185 129;
+    --color-secondary-foreground: 255 255 255;
+    --color-accent: 245 158 11;
+    --color-accent-foreground: 255 255 255;
+    --color-muted: 243 244 246;
+    --color-muted-foreground: 107 114 128;
+    --color-background: 255 255 255;
+    --color-foreground: 17 24 39;
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    /* Semantic 색상 (상태 표시)                                        */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    
+    --color-success: 16 185 129;
+    --color-success-foreground: 255 255 255;
+    --color-warning: 245 158 11;
+    --color-warning-foreground: 0 0 0;
+    --color-error: 239 68 68;
+    --color-error-foreground: 255 255 255;
+    --color-info: 59 130 246;
+    --color-info-foreground: 255 255 255;
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    /* 기타 변수                                                        */
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    
+    --color-border: 229 231 235;
+    --color-ring: 59 130 246;
+    --radius: 0.5rem;
+  }
+
+  /* 다크 모드 (향후 지원 예정) */
+  .dark {
+    --color-background: 17 24 39;
+    --color-foreground: 249 250 251;
+    --color-muted: 31 41 55;
+    --color-muted-foreground: 156 163 175;
+    --color-border: 55 65 81;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  /* 접근성: 포커스 스타일                                             */
+  /* 모든 인터랙티브 요소에 명확한 포커스 아웃라인을 표시합니다       */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  /* 접근성: 모션 감소 설정                                            */
+  /* 사용자가 시스템에서 모션 감소를 설정한 경우 애니메이션을 비활성화 */
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 스크린 리더 전용 클래스                                           */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}

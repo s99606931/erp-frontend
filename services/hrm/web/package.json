@@ -1,0 +1,27 @@
+{
+    "name": "@erp/hrm-web",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev -p 3010",
+        "build": "next build",
+        "start": "next start -p 3010",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@erp/shared": "workspace:*",
+        "@erp/ui": "workspace:*",
+        "@tanstack/react-table": "^8.11.2",
+        "lucide-react": "^0.309.0",
+        "next": "14.0.4",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@erp/typescript-config": "workspace:*",
+        "@types/node": "^20.11.0",
+        "@types/react": "^18.2.48",
+        "typescript": "^5.3.3",
+        "tailwindcss": "^3.4.1"
+    }
+}
