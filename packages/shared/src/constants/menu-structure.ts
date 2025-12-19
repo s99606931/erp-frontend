@@ -65,9 +65,9 @@ export const MENU_STRUCTURE: MenuItem[] = [
         label: '사업관리',
         icon: 'Briefcase',
         children: [
-            { id: 'project-list', label: '프로젝트 목록', path: '/project/list' },
-            { id: 'project-budget', label: '예산관리', path: '/project/budgets' },
-            { id: 'project-performance', label: '실적관리', path: '/project/performance' },
+            { id: 'pms-projects', label: '프로젝트 관리', path: '/pms/projects' },
+            { id: 'pms-tasks', label: '태스크 관리', path: '/pms/tasks' },
+            { id: 'pms-kanban', label: '칸반 보드', path: '/pms/projects' }, // 같은 페이지지만 바로가기 성격
         ],
     },
     {
@@ -76,6 +76,7 @@ export const MENU_STRUCTURE: MenuItem[] = [
         icon: 'Settings',
         roles: ['SUPER_ADMIN', 'TENANT_ADMIN'],
         children: [
+            { id: 'system-tenants', label: '기관(테넌트) 관리', path: '/system/tenants', roles: ['SUPER_ADMIN'] },
             { id: 'system-users', label: '사용자 관리', path: '/system/users' },
             { id: 'system-roles', label: '권한 관리', path: '/system/roles' },
             { id: 'system-code', label: '공통코드 관리', path: '/system/codes' },

@@ -64,8 +64,42 @@ export const userSchema = z.object({
 
 export type UserFormData = z.infer<typeof userSchema>;
 
+// ... existing code ...
+
+/**
+ * 테넌트 등록/수정 스키마
+ */
+export const tenantSchema = z.object({
+    name: z.string().min(2, '기관명은 최소 2자 이상이어야 합니다.'),
+    code: z.string().min(2, '기관 코드는 최소 2자 이상이어야 합니다.'),
+    type: z.enum(['PUBLIC', 'PRIVATE']),
+    domain: z.string().optional(),
+    description: z.string().optional(),
+    isActive: z.boolean().default(true),
+});
+
+export type TenantFormData = z.infer<typeof tenantSchema>;
+
+/**
+ * 사원 등록/수정 스키마
+ */
+export const employeeSchema = z.object({
+    name: z.string().min(2, '이름은 최소 2자 이상이어야 합니다.'),
+    email: emailRules,
+    phoneNumber: z.string().optional(),
+    departmentId: z.string().optional(),
+    position: z.string().optional(),
+    grade: z.enum(['L1', 'L2', 'L3', 'L4', 'L5', 'EX']),
+    employmentType: z.enum(['REGULAR', 'CONTRACT', 'INTERN', 'DISPATCH']),
+    joinDate: z.string(), // YYYY-MM-DD
+    status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING']),
+});
+
+export type EmployeeFormData = z.infer<typeof employeeSchema>;
+
 /**
  * 사업자등록번호 유효성 검사 (간이 알고리즘)
+
  * @param bn - 사업자번호 문자열 (하이픈 제거)
  */
 export function isValidBusinessNumber(bn: string): boolean {

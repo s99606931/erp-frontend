@@ -1,0 +1,46 @@
+
+import { type Employee, EmploymentType, EmployeeGrade, UserStatus } from '@erp/shared';
+
+export const MOCK_EMPLOYEES: Employee[] = [
+    {
+        id: 'emp-1',
+        tenantId: 't-1',
+        name: '홍길동',
+        email: 'hong@gov.kr',
+        grade: EmployeeGrade.L5,
+        employmentType: EmploymentType.REGULAR,
+        departmentName: '인사팀',
+        position: '팀장',
+        status: UserStatus.ACTIVE,
+        joinDate: new Date('2020-01-01'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        id: 'emp-2',
+        tenantId: 't-1',
+        name: '김철수',
+        email: 'kim@gov.kr',
+        grade: EmployeeGrade.L3,
+        employmentType: EmploymentType.REGULAR,
+        departmentName: '개발팀',
+        position: '과장',
+        status: UserStatus.ACTIVE,
+        joinDate: new Date('2021-03-15'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        id: 'emp-3',
+        tenantId: 't-1',
+        name: '이영희',
+        email: 'lee@gov.kr',
+        grade: EmployeeGrade.L1,
+        employmentType: EmploymentType.INTERN,
+        departmentName: '마케팅팀',
+        status: UserStatus.ACTIVE,
+        joinDate: new Date('2024-01-02'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+];

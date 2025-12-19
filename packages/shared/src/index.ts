@@ -11,6 +11,9 @@ export * from './api/client';
 export * from './types/common';
 export * from './types/user';
 export * from './types/tenant';
+export * from './types/hrm';
+export * from './types/finance';
+export * from './types/pms';
 
 // Constants
 export * from './constants/menu-structure';
