@@ -13,21 +13,13 @@
  *
  * [🎯 주요 기능]
  * 1. 사이드바 너비 드래그로 조정
- * 2. 패널 크기 localStorage에 저장/복원 (autoSaveId)
+ * 2. 패널 크기 Cookie에 저장/복원 (SSR 지원)
  * 3. 최소/최대 크기 제한
  * 4. 키보드 접근성 지원
  * 5. 사이드바 접기/펼치기
  *
- * [📦 사용 예시]
- * ```tsx
- * <ResizableLayout
- *   sidebar={<Sidebar />}
- *   main={<MainContent />}
- * />
- * ```
- *
  * [🔗 의존성]
- * - react-resizable-panels v4.x: 리사이저블 패널 라이브러리
+ * - react-resizable-panels v4.x
  * ============================================================================
  */
 
@@ -49,104 +41,92 @@ import { cn } from '@erp/ui';
  *
  * @property sidebar - 사이드바에 표시할 콘텐츠
  * @property main - 메인 영역에 표시할 콘텐츠
- * @property defaultSidebarSize - 사이드바 기본 크기 (%, 기본값: 15)
- * @property minSidebarSize - 사이드바 최소 크기 (%, 기본값: 10)
- * @property maxSidebarSize - 사이드바 최대 크기 (%, 기본값: 30)
+ * @property defaultSidebarSize - 사이드바 기본 크기 (%, 기본값: 20)
+ * @property minSidebarSize - 사이드바 최소 크기 (%, 기본값: 15)
+ * @property maxSidebarSize - 사이드바 최대 크기 (%, 기본값: 45)
+ * @property defaultLayout - 쿠키에서 복원된 초기 레이아웃 배열
  */
 interface ResizableLayoutProps {
   /** 사이드바에 표시할 콘텐츠 */
   sidebar: ReactNode;
   /** 메인 영역에 표시할 콘텐츠 */
   main: ReactNode;
-  /** 사이드바 기본 크기 (%, 기본값: 15) */
+  /** 사이드바 기본 크기 (%, 기본값: 20) */
   defaultSidebarSize?: number;
-  /** 사이드바 최소 크기 (%, 기본값: 10) */
+  /** 사이드바 최소 크기 (%, 기본값: 15) */
   minSidebarSize?: number;
-  /** 사이드바 최대 크기 (%, 기본값: 30) */
+  /** 사이드바 최대 크기 (%, 기본값: 45) */
   maxSidebarSize?: number;
+  /** 서버에서 전달받은 초기 레이아웃 (쿠키 값) */
+  defaultLayout?: number[] | undefined;
 }
 
 /**
  * 리사이저블 레이아웃 컴포넌트
- *
- * 사이드바와 메인 콘텐츠 사이에 드래그 가능한 핸들을 제공합니다.
- * 사용자가 드래그하면 패널 크기가 조정되고, localStorage에 저장됩니다.
- *
- * @example
- * // 기본 사용법
- * <ResizableLayout
- *   sidebar={<Sidebar />}
- *   main={<MainContent />}
- * />
- *
- * // 커스텀 사이드바 크기
- * <ResizableLayout
- *   sidebar={<Sidebar />}
- *   main={<MainContent />}
- *   defaultSidebarSize={20}
- * />
  */
 export function ResizableLayout({
   sidebar,
   main,
-  defaultSidebarSize = 15,
-  minSidebarSize = 10,
-  maxSidebarSize = 30,
+  // 기본값 설정
+  defaultSidebarSize = 20,
+  minSidebarSize = 15,
+  maxSidebarSize = 45,
+  defaultLayout,
 }: ResizableLayoutProps) {
   // 사이드바 접힘 상태 관리
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // 사이드바 패널 ref (프로그래밍적 제어용)
-  // v4에서는 usePanelRef 훅 사용
+  // 사이드바 패널 ref
   const sidebarPanelRef = usePanelRef();
 
   /**
    * 사이드바 토글 핸들러
-   * 접혀있으면 펼치고, 펼쳐져 있으면 접습니다.
    */
   const toggleSidebar = useCallback(() => {
     const panel = sidebarPanelRef.current;
     if (!panel) return;
 
     if (isCollapsed) {
-      // 펼치기: 기본 크기로 복원
       panel.expand();
     } else {
-      // 접기: 0%로 축소
       panel.collapse();
     }
   }, [isCollapsed, sidebarPanelRef]);
 
   /**
-   * 패널 크기 변경 핸들러
-   * v4에서는 PanelSize는 { asPercentage: number; inPixels: number } 객체입니다.
-   * 크기가 1% 미만이면 접힌 것으로 간주
+   * 패널 크기 변경 핸들러 (접힘 상태 감지 및 쿠키 저장)
+   * PanelGroup의 onLayout이 v4 Group에서 지원되지 않을 수 있어 여기서 처리
    */
   const handleSidebarResize = useCallback((panelSize: PanelSize, _id?: string | number) => {
-    // PanelSize 객체에서 퍼센트 값 추출
     const size = panelSize.asPercentage;
     setIsCollapsed(size < 1);
+
+    // 쿠키 저장 (SSR 복원용)
+    const layout = [size, 100 - size];
+
+    // 쿠키 설정: 1년 유효
+    document.cookie = `react-resizable-panels:layout=${JSON.stringify(layout)}; path=/; max-age=31536000; SameSite=Lax`;
   }, []);
+
+  // 초기 사이드바 크기 계산 및 안전 장치
+  // 배열 인덱스 접근 안전성 확보 (Optional Chaining & Nullish Coalescing)
+  let initialSidebarSize = defaultLayout?.[0] ?? defaultSidebarSize;
+
+  // 저장된 값이 최소 크기보다 작지만 0(접힘)은아닌 경우 (애매하게 작아진 상태 복원 방지)
+  // 1% ~ minSidebarSize 사이의 값은 minSidebarSize로 강제 보정
+  if (initialSidebarSize > 1 && initialSidebarSize < minSidebarSize) {
+    initialSidebarSize = minSidebarSize;
+  }
 
   return (
     <Group
       orientation="horizontal"
-      // id: localStorage에 레이아웃 상태를 저장할 키
-      // 같은 키를 사용하면 페이지 새로고침 후에도 크기가 유지됩니다
-      id="erp-main-layout"
       className="h-full"
     >
-      {/*
-        사이드바 패널
-        - defaultSize: 초기 크기 (숫자 = %, 문자열 = "200px")
-        - minSize: 최소 크기
-        - maxSize: 최대 크기
-        - collapsible: true면 완전히 접을 수 있음
-        - collapsedSize: 접혔을 때 크기
-      */}
+      {/* 사이드바 패널 */}
       <Panel
         panelRef={sidebarPanelRef}
-        defaultSize={defaultSidebarSize}
+        defaultSize={initialSidebarSize}
         minSize={minSidebarSize}
         maxSize={maxSidebarSize}
         collapsible={true}
@@ -158,33 +138,21 @@ export function ResizableLayout({
           isCollapsed && 'flex-none'
         )}
       >
-        {/* 사이드바 콘텐츠 */}
         <div className="h-full overflow-hidden">{sidebar}</div>
       </Panel>
 
-      {/*
-        리사이즈 핸들 (Separator)
-        - 이 영역을 드래그하면 패널 크기가 변경됩니다
-        - 호버 시 시각적 피드백 제공
-        - w-2 (8px)로 드래그 영역 확대
-      */}
+      {/* 리사이즈 핸들 */}
       <Separator
         className={cn(
-          // 기본 스타일 - 더 넓은 핸들 (8px)
           'relative flex w-2 items-center justify-center',
           'bg-border',
-          // 호버 시 - 더 밝은 primary 색상
           'hover:bg-primary/50',
-          // 드래그 중 - 강조
           'data-[resize-handle-active]:bg-primary',
-          // 트랜지션
           'transition-colors duration-150',
-          // 커서
           'cursor-col-resize'
         )}
         id="sidebar-resize-handle"
       >
-        {/* 드래그 핸들 아이콘 (항상 표시) */}
         <div
           className={cn(
             'absolute rounded bg-muted-foreground/30 p-0.5',
@@ -196,13 +164,12 @@ export function ResizableLayout({
         </div>
       </Separator>
 
-      {/*
-        메인 콘텐츠 패널
-        - 사이드바를 제외한 나머지 공간을 차지합니다
-      */}
-      <Panel id="main">
+      {/* 메인 패널 */}
+      <Panel
+        id="main"
+        defaultSize={defaultLayout ? defaultLayout[1] : undefined}
+      >
         <div className="relative h-full overflow-hidden">
-          {/* 사이드바 토글 버튼 (사이드바가 접혔을 때 표시) */}
           {isCollapsed && (
             <button
               onClick={toggleSidebar}
@@ -219,7 +186,6 @@ export function ResizableLayout({
             </button>
           )}
 
-          {/* 메인 콘텐츠 */}
           {main}
         </div>
       </Panel>

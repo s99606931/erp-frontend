@@ -146,13 +146,16 @@ export const WideSidebar: Story = {
         </div>
       </div>
     ),
+
     main: (
       <div className="h-full bg-background p-6">
         <h1 className="text-2xl font-bold">코드 에디터 영역</h1>
       </div>
     ),
+
     defaultSidebarSize: 30,
     minSidebarSize: 15,
     maxSidebarSize: 50,
+    defaultLayout: [20, 80]
   },
 };

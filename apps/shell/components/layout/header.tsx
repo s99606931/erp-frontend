@@ -23,6 +23,7 @@ import { Bell, Search, Menu, User as UserIcon, LogOut } from 'lucide-react';
 import { Button, Input } from '@erp/ui/components';
 import { useLayoutStore } from '@/lib/store/layout';
 import { useTheme } from 'next-themes';
+import { AIButton } from '@/components/features/ai-button';
 
 export function Header() {
     const { data: session } = useSession();
@@ -90,6 +91,9 @@ export function Header() {
 
             {/* 우측: 유틸리티 & 프로필 */}
             <div className="flex items-center gap-2">
+                {/* AI 어시스턴트 버튼 */}
+                <AIButton />
+
                 {/* 테마 토글 (임시) */}
                 <Button
                     variant="ghost"

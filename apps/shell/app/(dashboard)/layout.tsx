@@ -21,8 +21,12 @@
 import { Header } from '@/components/layout/header';
 import { Sidebar } from '@/components/layout/sidebar';
 import { StatusBar } from '@/components/layout/status-bar';
-import { WorkspaceTabs } from '@/components/layout/workspace-tabs';
+import { TabBar } from '@/components/layout/tab-bar';
 import { ResizableLayout } from '@/components/layout/resizable-layout';
+import { SplitView } from '@/components/layout/split-view';
+import { CommandPalette } from '@/components/features/command-palette';
+import { AIPanel } from '@/components/features/ai-panel';
+import { AIFAB } from '@/components/features/ai-fab';
 
 export default function DashboardLayout({
     children,
@@ -31,6 +35,10 @@ export default function DashboardLayout({
 }) {
     return (
         <div className="flex h-screen flex-col overflow-hidden bg-background">
+            <CommandPalette />
+            <AIPanel />
+            <AIFAB />
+
             {/* 1. 글로벌 헤더 (64px) */}
             <Header />
 
@@ -42,18 +50,18 @@ export default function DashboardLayout({
                         <main className="flex h-full flex-1 flex-col overflow-hidden bg-muted/10 relative">
                             {/* 상단 탭 네비게이션 */}
                             <div className="flex-none">
-                                <WorkspaceTabs />
+                                <TabBar />
                             </div>
 
                             {/* 실제 페이지 콘텐츠 */}
-                            <div className="flex-1 overflow-auto p-4 md:p-6" id="main-content">
-                                {children}
+                            <div className="flex-1 overflow-hidden p-0" id="main-content">
+                                <SplitView>
+                                    {children}
+                                </SplitView>
                             </div>
                         </main>
                     }
-                    defaultSidebarSize={15}
-                    minSidebarSize={10}
-                    maxSidebarSize={30}
+
                 />
             </div>
 
@@ -62,4 +70,3 @@ export default function DashboardLayout({
         </div>
     );
 }
-

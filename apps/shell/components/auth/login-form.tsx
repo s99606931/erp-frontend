@@ -39,8 +39,8 @@ export function LoginForm() {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: '',
-            password: '',
+            email: 'admin@test.com', // [DEV] auth.ts MOCK_USERS 참조
+            password: 'password123', // [DEV] auth.ts MOCK_USERS 참조
         },
     });
 

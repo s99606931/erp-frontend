@@ -9,20 +9,19 @@
  * [📄 파일 설명]
  * 좌측 사이드바 네비게이션입니다.
  * 메뉴 구조를 재귀적으로 렌더링하며, 접힘/펼침 상태를 지원합니다.
- *
- * [⌨️ 단축키]
- * - Ctrl+B: 사이드바 토글
+ * 
+ * [수정 사항]
+ * - ResizableLayout 내부에서 사용되므로 자체적인 너비 제한(max-w)을 제거하고
+ * - 항상 콘텐츠를 렌더링하도록 수정했습니다. (너비 제어는 부모 패널이 담당)
  * ============================================================================
  */
 
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@erp/ui';
 import { Button } from '@erp/ui/components';
-import { useLayoutStore } from '@/lib/store/layout';
 import { MENU_STRUCTURE } from '@erp/shared';
 import { LayoutDashboard, ChevronDown } from 'lucide-react';
 import * as Icons from 'lucide-react'; // Dynamic Icon Rendering
@@ -37,46 +36,31 @@ const DynamicIcon = ({ name, className }: { name: string; className?: string }) 
 
 export function Sidebar() {
     const pathname = usePathname();
-    const { sidebarOpen, toggleSidebar } = useLayoutStore();
 
-    // 단축키 Ctrl+B 처리
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
-                e.preventDefault();
-                toggleSidebar();
-            }
-        };
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [toggleSidebar]);
 
     return (
         <aside
             className={cn(
                 // 리사이저블 패널과 호환: 부모 패널이 크기를 제어하므로 w-full 사용
                 'relative flex h-full w-full flex-col border-r bg-muted/10',
-                // 접힌 상태일 때 최소 너비만 적용
-                !sidebarOpen && 'min-w-[64px] max-w-[64px]'
+                'min-w-[240px]' // 내부 콘텐츠 보호를 위한 최소 너비
             )}
         >
-            {/* 상단 즐겨찾기/최근 영역 (펼쳐진 상태에서만 노출) */}
-            {sidebarOpen && (
-                <div className="p-4 border-b">
-                    <h3 className="text-xs font-semibold text-muted-foreground mb-2">
-                        즐겨찾기
-                    </h3>
-                    <div className="space-y-1">
-                        <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
-                            <span className="truncate">⭐ 이번 달 지출 결의</span>
-                        </Button>
-                        <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
-                            <span className="truncate">⭐ 부서별 예산 현황</span>
-                        </Button>
-                    </div>
+            {/* 상단 즐겨찾기/최근 영역 */}
+            <div className="p-4 border-b">
+                <h3 className="text-xs font-semibold text-muted-foreground mb-2">
+                    즐겨찾기
+                </h3>
+                <div className="space-y-1">
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
+                        <span className="truncate">⭐ 이번 달 지출 결의</span>
+                    </Button>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-sm h-8 px-2">
+                        <span className="truncate">⭐ 부서별 예산 현황</span>
+                    </Button>
                 </div>
-            )}
+            </div>
 
             {/* 네비게이션 메뉴 */}
             <nav className="flex-1 overflow-y-auto py-4">
@@ -92,25 +76,19 @@ export function Sidebar() {
                                         href={menuPath}
                                         className={cn(
                                             'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                                            isActive ? 'bg-accent/50 text-accent-foreground' : 'text-muted-foreground',
-                                            !sidebarOpen && 'justify-center px-0'
+                                            isActive ? 'bg-accent/50 text-accent-foreground' : 'text-muted-foreground'
                                         )}
-                                        title={!sidebarOpen ? (menu.label || '') : undefined}
                                     >
                                         <DynamicIcon name={menu.icon || 'LayoutDashboard'} className="h-4 w-4 shrink-0" />
 
-                                        {sidebarOpen && (
-                                            <>
-                                                <span className="ml-3 truncate flex-1">{menu.label}</span>
-                                                {menu.children && (
-                                                    <ChevronDown className="h-3 w-3 text-muted-foreground/50" />
-                                                )}
-                                            </>
+                                        <span className="ml-3 truncate flex-1">{menu.label}</span>
+                                        {menu.children && (
+                                            <ChevronDown className="h-3 w-3 text-muted-foreground/50" />
                                         )}
                                     </Link>
 
                                     {/* Submenu */}
-                                    {sidebarOpen && menu.children && isActive && (
+                                    {menu.children && isActive && (
                                         <ul className="ml-4 space-y-1 border-l pl-2">
                                             {menu.children.map((child) => (
                                                 <li key={child.id}>
@@ -135,12 +113,10 @@ export function Sidebar() {
             </nav>
 
             {/* 하단 버전 정보 */}
-            {sidebarOpen && (
-                <div className="p-4 text-xs text-muted-foreground border-t">
-                    <p>ERP v2.0</p>
-                    <p className="mt-1">© 2025 GovTech</p>
-                </div>
-            )}
+            <div className="p-4 text-xs text-muted-foreground border-t">
+                <p>ERP v2.0</p>
+                <p className="mt-1">© 2025 GovTech</p>
+            </div>
         </aside>
     );
 }

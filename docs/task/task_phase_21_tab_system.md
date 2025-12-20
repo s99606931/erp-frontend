@@ -403,14 +403,14 @@ export function useTabShortcuts() {
 
 ## 📊 완료 체크리스트
 
-- [ ] `tab-store.ts` 생성 및 모든 함수 주석 작성
-- [ ] `tab-bar.tsx` 생성 및 모든 함수 주석 작성
-- [ ] `use-tab-shortcuts.ts` 생성
-- [ ] 탭 클릭으로 전환 동작
-- [ ] Ctrl+Tab 단축키 동작
-- [ ] 탭 닫기 동작
-- [ ] 새로고침 후 탭 유지 확인
-- [ ] TypeScript 에러 없음
+- [x] `tab-store.ts` 생성 및 모든 함수 주석 작성
+- [x] `tab-bar.tsx` 생성 및 모든 함수 주석 작성
+- [x] `use-tab-shortcuts.ts` 생성
+- [x] 탭 클릭으로 전환 동작
+- [x] Ctrl+Tab 단축키 동작
+- [x] 탭 닫기 동작
+- [x] 새로고침 후 탭 유지 확인
+- [x] TypeScript 에러 없음
 
 ---
 
