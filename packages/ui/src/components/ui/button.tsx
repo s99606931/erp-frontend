@@ -141,6 +141,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         // asChild가 true면 Slot 사용 (자식 요소가 버튼 역할)
         const Comp = asChild ? Slot : 'button';
 
+        // asChild가 true일 때는 children만 전달 (Slot은 단일 자식만 허용)
+        // asChild가 false일 때는 로딩 스피너 + children 함께 렌더링
+        if (asChild) {
+            return (
+                <Comp
+                    className={cn(buttonVariants({ variant, size, className }))}
+                    ref={ref}
+                    aria-busy={isLoading}
+                    aria-disabled={disabled || isLoading}
+                    {...props}
+                >
+                    {children}
+                </Comp>
+            );
+        }
+
         return (
             <Comp
                 className={cn(buttonVariants({ variant, size, className }))}
