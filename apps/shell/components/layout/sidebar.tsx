@@ -55,8 +55,10 @@ export function Sidebar() {
     return (
         <aside
             className={cn(
-                'relative flex flex-col border-r bg-muted/10 transition-all duration-300 ease-in-out',
-                sidebarOpen ? 'w-60' : 'w-16'
+                // 리사이저블 패널과 호환: 부모 패널이 크기를 제어하므로 w-full 사용
+                'relative flex h-full w-full flex-col border-r bg-muted/10',
+                // 접힌 상태일 때 최소 너비만 적용
+                !sidebarOpen && 'min-w-[64px] max-w-[64px]'
             )}
         >
             {/* 상단 즐겨찾기/최근 영역 (펼쳐진 상태에서만 노출) */}

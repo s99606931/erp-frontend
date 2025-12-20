@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      react-resizable-panels:
+        specifier: ^4.0.11
+        version: 4.0.11(react-dom@19.2.3)(react@19.2.3)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.1.18
@@ -7610,6 +7614,16 @@ packages:
       tslib: 2.8.1
       use-callback-ref: 1.3.3(@types/react@19.2.7)(react@19.2.3)
       use-sidecar: 1.1.3(@types/react@19.2.7)(react@19.2.3)
+    dev: false
+
+  /react-resizable-panels@4.0.11(react-dom@19.2.3)(react@19.2.3):
+    resolution: {integrity: sha512-v5xPrag28c+z5Lw6sl+/tQOeYr5HvoxbycXT+nm/JktQN27gY4oO2cuYo2gCeyVoX19AQKeEo4ULwQDXXgykCQ==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
     dev: false
 
   /react-style-singleton@2.2.3(@types/react@19.2.7)(react@19.2.3):
