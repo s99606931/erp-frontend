@@ -35,7 +35,7 @@ const meta: Meta<typeof Badge> = {
 |---------|------|------|
 | **default** | 일반 정보 | 카테고리, 태그 |
 | **secondary** | 보조 정보 | 비활성 상태 |
-| **destructive** | 위험/오류 | 삭제됨, 오류 |
+| **error** | 위험/오류 | 삭제됨, 오류 |
 | **outline** | 최소 강조 | 필터 태그 |
         `,
             },
@@ -45,7 +45,7 @@ const meta: Meta<typeof Badge> = {
     argTypes: {
         variant: {
             control: 'select',
-            options: ['default', 'secondary', 'destructive', 'outline'],
+            options: ['default', 'secondary', 'error', 'outline'],
         },
     },
 };
@@ -64,7 +64,7 @@ export const AllVariants: Story = {
         <div className="flex gap-2">
             <Badge>Default</Badge>
             <Badge variant="secondary">Secondary</Badge>
-            <Badge variant="destructive">Destructive</Badge>
+            <Badge variant="error">Destructive</Badge>
             <Badge variant="outline">Outline</Badge>
         </div>
     ),
@@ -107,7 +107,7 @@ export const WithCount: Story = {
         <div className="flex gap-4 items-center">
             <div className="flex items-center gap-2">
                 <span>알림</span>
-                <Badge variant="destructive" className="rounded-full px-2">
+                <Badge variant="error" className="rounded-full px-2">
                     5
                 </Badge>
             </div>

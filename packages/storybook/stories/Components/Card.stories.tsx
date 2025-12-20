@@ -184,7 +184,7 @@ export const DashboardStats: Story = {
                     <CardTitle className="text-sm font-medium text-gray-500">
                         결재 대기
                     </CardTitle>
-                    <Badge variant="destructive" className="text-xs">
+                    <Badge variant="error" className="text-xs">
                         8건
                     </Badge>
                 </CardHeader>

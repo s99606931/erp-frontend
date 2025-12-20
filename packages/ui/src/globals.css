@@ -1,32 +1,67 @@
 /**
  * ============================================================================
- * 파일명: globals.css
- * 패키지: @erp/ui
- * 경로: packages/ui/src/globals.css
- * 작성일: 2025-12-19
- * ============================================================================
- *
- * [파일 설명]
- * 전역 CSS 변수 및 Tailwind 기본 스타일
- * 모든 앱에서 이 파일을 import하여 일관된 스타일을 적용합니다.
- *
- * [♿ 접근성]
- * - 포커스 스타일 정의
- * - prefers-reduced-motion 대응
+ * @module GlobalStyles
+ * @description 전역 CSS 변수 및 Tailwind v4 테마 설정
+ * 
+ * [🎯 주요 역할]
+ * 1. 테넌트(Tenant)별 동적 테마 색상 정의
+ * 2. Tailwind CSS v4용 @theme 블록 선언
+ * 3. 웹 접근성(a11y) 표준 준수 포커스/모션 스타일링
+ * 
+ * [💡 초급자를 위한 정보]
+ * - rbg(var(--변수)): CSS 변수를 사용하여 색상을 동적으로 바꿀 수 있게 합니다.
+ * - @theme: Tailwind v4에서 자바스크립트 설정 파일 대신 CSS에서 직접 테마를 정의하는 방식입니다.
  * ============================================================================
  */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/**
+ * @section Tailwind v4 Theme Configuration
+ * @description CSS 기반으로 테마 변수를 매핑합니다.
+ */
+@theme {
+  /* --- 기본 색상 (Legacy 호환성 및 테넌트 테마) --- */
+  --color-border: rgb(var(--color-border));
+  --color-input: rgb(var(--color-border));
+  --color-ring: rgb(var(--color-ring));
+  --color-background: rgb(var(--color-background));
+  --color-foreground: rgb(var(--color-foreground));
+
+  /* --- 브랜드 색상 --- */
+  --color-primary: rgb(var(--color-primary));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-secondary: rgb(var(--color-secondary));
+  --color-secondary-foreground: rgb(var(--color-secondary-foreground));
+  --color-accent: rgb(var(--color-accent));
+  --color-accent-foreground: rgb(var(--color-accent-foreground));
+  --color-muted: rgb(var(--color-muted));
+  --color-muted-foreground: rgb(var(--color-muted-foreground));
+
+  /* --- UI 요소 전용 색상 --- */
+  --color-popover: rgb(var(--color-background));
+  --color-popover-foreground: rgb(var(--color-foreground));
+  --color-card: rgb(var(--color-background));
+  --color-card-foreground: rgb(var(--color-foreground));
+
+  /* --- 상황별(Semantic) 색상 --- */
+  --color-success: rgb(var(--color-success));
+  --color-success-foreground: rgb(var(--color-success-foreground));
+  --color-warning: rgb(var(--color-warning));
+  --color-warning-foreground: rgb(var(--color-warning-foreground));
+  --color-error: rgb(var(--color-error));
+  --color-error-foreground: rgb(var(--color-error-foreground));
+  --color-info: rgb(var(--color-info));
+  --color-info-foreground: rgb(var(--color-info-foreground));
+
+  /* --- 테넌트별 가변 수치 (Radius 등) --- */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
 
 @layer base {
   :root {
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    /* 테넌트 테마 색상 (CSS 변수)                                      */
-    /* 이 값들은 로그인 시 테넌트에 따라 동적으로 변경됩니다           */
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
     --color-primary: 59 130 246;
     --color-primary-foreground: 255 255 255;
     --color-secondary: 16 185 129;
@@ -38,10 +73,6 @@
     --color-background: 255 255 255;
     --color-foreground: 17 24 39;
 
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    /* Semantic 색상 (상태 표시)                                        */
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
     --color-success: 16 185 129;
     --color-success-foreground: 255 255 255;
     --color-warning: 245 158 11;
@@ -51,16 +82,11 @@
     --color-info: 59 130 246;
     --color-info-foreground: 255 255 255;
 
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    /* 기타 변수                                                        */
-    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
     --color-border: 229 231 235;
     --color-ring: 59 130 246;
     --radius: 0.5rem;
   }
 
-  /* 다크 모드 (향후 지원 예정) */
   .dark {
     --color-background: 17 24 39;
     --color-foreground: 249 250 251;
@@ -72,18 +98,14 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: rgb(var(--color-border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-
-  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-  /* 접근성: 포커스 스타일                                             */
-  /* 모든 인터랙티브 요소에 명확한 포커스 아웃라인을 표시합니다       */
-  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
   *:focus-visible {
     @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;

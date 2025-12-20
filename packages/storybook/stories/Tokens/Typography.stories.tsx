@@ -32,7 +32,7 @@ import { typography } from '@erp/ui/tokens';
 interface TypeSampleProps {
     name: string;
     size: string;
-    lineHeight: string;
+    lineHeight: string | number;
     weight?: string;
     description?: string;
 }
@@ -96,24 +96,24 @@ const TypographyTokens: React.FC = () => {
                         <div className="text-sm text-gray-500 mb-2">본문용</div>
                         <div
                             className="text-2xl font-semibold"
-                            style={{ fontFamily: typography.fontFamily.sans }}
+                            style={{ fontFamily: typography.fontFamily.sans.join(', ') }}
                         >
                             Pretendard
                         </div>
                         <div className="text-sm text-gray-600 mt-2">
-                            {typography.fontFamily.sans}
+                            {typography.fontFamily.sans.join(', ')}
                         </div>
                     </div>
                     <div className="p-6 bg-gray-50 rounded-lg">
                         <div className="text-sm text-gray-500 mb-2">코드/숫자용</div>
                         <div
                             className="text-2xl font-semibold"
-                            style={{ fontFamily: typography.fontFamily.mono }}
+                            style={{ fontFamily: typography.fontFamily.mono.join(', ') }}
                         >
                             Fira Code
                         </div>
                         <div className="text-sm text-gray-600 mt-2">
-                            {typography.fontFamily.mono}
+                            {typography.fontFamily.mono.join(', ')}
                         </div>
                     </div>
                 </div>

@@ -34,7 +34,7 @@ VS Code 수준의 생산성을 제공하는 **"업무용 운영체제"** 개념�
 
 ```bash
 # 1. 저장소 클론
-git clone <repository-url>
+git clone https://github.com/s99606931/erp-frontend.git
 cd erp-frontend
 
 # 2. 의존성 설치
@@ -44,7 +44,14 @@ pnpm install
 pnpm dev
 
 # 4. 브라우저에서 접속
-# Shell: http://localhost:3000
+🚀 서비스 가동 현황
+현재 모노레포 내의 모든 주요 프로젝트가 개발 모드로 가동 중입니다:
+
+메인 셸(Shell) 앱: http://localhost:3000
+스토리북(Storybook): http://localhost:6006
+인증 서비스(Auth): http://localhost:3001
+인사 관리 서비스(HRM): http://localhost:3010
+급여 관리 서비스(Payroll): http://localhost:3011
 ```
 
 ### 개별 서비스 실행
