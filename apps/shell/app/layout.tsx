@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     description: '공공기관을 위한 통합 ERP 시스템',
 };
 
+import { ThemeProvider } from '@/components/providers/theme-provider';
+
 export default function RootLayout({
     children,
 }: {
@@ -31,11 +33,13 @@ export default function RootLayout({
 }) {
     return (
         <html lang="ko" suppressHydrationWarning>
-            <body className="min-h-screen bg-background font-sans antialiased">
+            <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
                 <Providers>
-                    <TokenSyncer />
-                    {children}
-                    <Toaster />
+                    <ThemeProvider>
+                        <TokenSyncer />
+                        {children}
+                        <Toaster />
+                    </ThemeProvider>
                 </Providers>
             </body>
         </html>

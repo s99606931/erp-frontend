@@ -75,6 +75,12 @@ interface TabStore {
   nextTab: () => void;
 
   /**
+   * 탭 목록을 직접 설정합니다 (드래그 앤 드롭 순서 변경용)
+   * @param tabs - 설정할 탭 목록
+   */
+  setTabs: (tabs: Tab[]) => void;
+
+  /**
    * 이전 탭으로 전환합니다 (Ctrl+Shift+Tab)
    */
   prevTab: () => void;
@@ -177,6 +183,9 @@ export const useTabStore = create<TabStore>()(
 
         const prevIndex = (startIndex - 1 + tabs.length) % tabs.length;
         set({ activeTabId: tabs[prevIndex]?.id || null });
+      },
+      setTabs: (tabs: Tab[]) => {
+        set({ tabs });
       },
     }),
     {

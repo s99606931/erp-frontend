@@ -4,18 +4,23 @@
  * 패키지: @erp/shell
  * 경로: apps/shell/components/layout/split-view.tsx
  * 작성일: 2025-12-20
+ * 수정일: 2025-12-20 (Allotment 리팩토링)
  * ============================================================================
  *
  * [📄 파일 설명]
  * 분할 뷰 레이아웃 컴포넌트입니다.
  * SplitViewStore의 상태(PanelNode 트리)를 순회하며 
- * 재귀적으로 Group(PanelGroup)과 Panel을 렌더링합니다.
+ * 재귀적으로 Allotment 패널을 렌더링합니다.
+ *
+ * [🔗 의존성]
+ * - allotment v1.x (VS Code 패널 시스템)
  * ============================================================================
  */
 
 'use client';
 
-import { Panel, Group, Separator } from 'react-resizable-panels';
+import { Allotment } from 'allotment';
+import 'allotment/dist/style.css';
 import { type PanelNode, useSplitViewStore } from '../../stores/split-view-store';
 import { useSplitShortcuts } from '../../hooks/use-split-shortcuts';
 import { cn } from '@erp/ui';
@@ -45,57 +50,44 @@ export function SplitView({ children }: { children?: React.ReactNode }) {
   }
 
   return (
-    <Group orientation="horizontal" className="h-full" id="split-view-root">
+    <div className="h-full w-full">
       <RecursivePanel node={root} initialChildren={children} />
-    </Group>
+    </div>
   );
 }
 
 /**
- * 재귀 렌더링 컴포넌트 (Props로 children 전달)
+ * 재귀 렌더링 컴포넌트 (Allotment 기반)
  */
 function RecursivePanel({ node, initialChildren }: { node: PanelNode, initialChildren?: React.ReactNode }) {
   if (node.type === 'leaf') {
     // ID가 'main'인 리프 노드에만 실제 children을 렌더링
     if (node.id === 'main' && initialChildren) {
       return (
-        <Panel key={node.id} id={node.id} minSize={20}>
-          <div className="h-full w-full overflow-auto bg-background" onClick={() => useSplitViewStore.getState().setActivePanel(node.id)}>
-            {initialChildren}
-          </div>
-        </Panel>
-      )
+        <div className="h-full w-full overflow-auto bg-background" onClick={() => useSplitViewStore.getState().setActivePanel(node.id)}>
+          {initialChildren}
+        </div>
+      );
     }
 
-    return (
-      <Panel key={node.id} id={node.id} minSize={20}>
-        <PanelContent panelId={node.id} tabId={node.tabId} />
-      </Panel>
-    );
+    return <PanelContent panelId={node.id} tabId={node.tabId} />;
   }
 
   // PanelNode type은 'horizontal' | 'vertical'
-  // react-resizable-panels orientation은 'horizontal' | 'vertical'
-  const orientation = node.type === 'horizontal' ? 'horizontal' : 'vertical';
+  // Allotment: vertical={true} → 세로 분할 (위/아래), vertical={false} → 가로 분할 (좌/우)
+  // PanelNode 'horizontal' → 가로로 배치 (좌/우) → Allotment vertical={false}
+  // PanelNode 'vertical' → 세로로 배치 (위/아래) → Allotment vertical={true}
+  const isVertical = node.type === 'vertical';
 
   return (
-    <Group orientation={orientation}>
-      <RecursivePanel node={node.children[0]} initialChildren={initialChildren} />
-
-      <Separator className={cn(
-        'transition-colors relative flex items-center justify-center bg-border z-10',
-        orientation === 'horizontal'
-          ? 'w-2 -mx-1 cursor-col-resize hover:bg-primary/50'
-          : 'h-2 -my-1 cursor-row-resize hover:bg-primary/50'
-      )}>
-        <div className={cn(
-          "bg-muted-foreground/30 rounded-full",
-          orientation === 'horizontal' ? "h-8 w-1" : "w-8 h-1"
-        )} />
-      </Separator>
-
-      <RecursivePanel node={node.children[1]} initialChildren={initialChildren} />
-    </Group>
+    <Allotment vertical={isVertical}>
+      <Allotment.Pane minSize={100}>
+        <RecursivePanel node={node.children[0]} initialChildren={initialChildren} />
+      </Allotment.Pane>
+      <Allotment.Pane minSize={100}>
+        <RecursivePanel node={node.children[1]} initialChildren={initialChildren} />
+      </Allotment.Pane>
+    </Allotment>
   );
 }
 

@@ -153,9 +153,8 @@ export const WideSidebar: Story = {
       </div>
     ),
 
-    defaultSidebarSize: 30,
-    minSidebarSize: 15,
-    maxSidebarSize: 50,
-    defaultLayout: [20, 80]
+    defaultSidebarSize: 250,
+    minSidebarSize: 200,
+    maxSidebarSize: 450,
   },
 };

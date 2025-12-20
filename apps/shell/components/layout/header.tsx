@@ -5,14 +5,6 @@
  * 경로: apps/shell/components/layout/header.tsx
  * 작성일: 2025-12-20
  * ============================================================================
- *
- * [📄 파일 설명]
- * 대시보드 상단 글로벌 헤더입니다.
- * 로고, 통합 검색, 알림, 프로필 영역을 포함합니다.
- *
- * [⌨️ 단축키]
- * - `/`: 통합 검색 입력창 포커스
- * ============================================================================
  */
 
 'use client';
@@ -22,13 +14,14 @@ import { useSession, signOut } from 'next-auth/react';
 import { Bell, Search, Menu, User as UserIcon, LogOut } from 'lucide-react';
 import { Button, Input } from '@erp/ui/components';
 import { useLayoutStore } from '@/lib/store/layout';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes'; // theme-toggle 내부에서 처리하므로 여기선 제거 가능하지만, 일단 둠
 import { AIButton } from '@/components/features/ai-button';
+import { ThemeToggle } from '@/components/features/theme-toggle';
 
 export function Header() {
     const { data: session } = useSession();
     const { toggleSidebar } = useLayoutStore();
-    const { theme, setTheme } = useTheme();
+    // const { theme, setTheme } = useTheme(); // ThemeToggle이 담당
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     // 단축키 `/` 처리
@@ -65,7 +58,6 @@ export function Header() {
                     <span className="hidden text-lg font-bold md:inline-block">
                         공공 ERP
                     </span>
-                    {/* 테넌트 이름 표시 (추후 동적 연동) */}
                     <span className="ml-2 hidden text-xs text-muted-foreground md:inline-block border px-2 py-0.5 rounded-full">
                         서울특별시
                     </span>
@@ -91,19 +83,8 @@ export function Header() {
 
             {/* 우측: 유틸리티 & 프로필 */}
             <div className="flex items-center gap-2">
-                {/* AI 어시스턴트 버튼 */}
                 <AIButton />
-
-                {/* 테마 토글 (임시) */}
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    aria-label="테마 변경"
-                >
-                    <span className="sr-only">테마 변경</span>
-                    <div className="h-4 w-4 rounded-full border bg-foreground" />
-                </Button>
+                <ThemeToggle />
 
                 <Button variant="ghost" size="icon" aria-label="알림 확인">
                     <Bell className="h-5 w-5" />

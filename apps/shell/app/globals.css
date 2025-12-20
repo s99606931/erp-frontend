@@ -53,3 +53,51 @@ body {
     height: 4px;
     cursor: row-resize;
 }
+/* 드래그 중인 요소 */
+[data-dragging="true"] {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+/* 드롭 영역 하이라이트 */
+[data-drop-target="true"] {
+  background-color: hsl(var(--primary) / 0.1);
+  border: 2px dashed hsl(var(--primary));
+}
+
+/* 드래그 오버레이 */
+.drag-overlay {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  cursor: grabbing;
+}
+
+
+/**
+ * 시스템 설정에서 "모션 줄이기"를 활성화한 사용자를 위한 스타일
+ * 애니메이션을 비활성화하여 불편함을 줄입니다.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* Allotment 구분선 스타일 커스터마이징 */
+.split-view-view > .sash-container > .sash {
+  background-color: hsl(var(--border) / 0.3) !important;
+}
+
+.split-view-view > .sash-container > .sash:hover {
+  background-color: hsl(var(--primary) / 0.3) !important;
+}
+
+.split-view-view > .sash-container > .sash.active {
+  background-color: hsl(var(--primary) / 0.5) !important;
+}
+
