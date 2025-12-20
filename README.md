@@ -141,6 +141,7 @@ docker-compose down         # 중지
 |------|------|
 | [PRD_MAIN_UI.md](docs/PRD_MAIN_UI.md) | 요구사항 정의서 |
 | [DESIGN_SYSTEM_RULES.md](docs/DESIGN_SYSTEM_RULES.md) | 디자인 시스템 규칙 |
+| [STORYBOOK_GUIDE.md](docs/STORYBOOK_GUIDE.md) | Storybook 사용 가이드 |
 | [CODING_GUIDELINES.md](docs/task/CODING_GUIDELINES.md) | 코딩 지침 |
 | [완료 보고서](docs/task/reports/README.md) | Phase별 완료 보고서 |
 

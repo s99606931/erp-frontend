@@ -129,3 +129,5 @@ temp/
 # PWA
 **/public/sw.js
 **/public/workbox-*.js
+
+*storybook.log
